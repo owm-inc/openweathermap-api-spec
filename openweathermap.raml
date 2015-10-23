@@ -1,0 +1,138 @@
+#%RAML 0.8
+
+title: OpenWeatherMap API
+baseUri: http://pro.openweathermap.org/data/{version}
+version: v2.5
+traits:
+    - secured:
+        usage: Apply this to any method that needs to be secured
+        description: Some requests require authentication.
+        queryParameters:
+            appid:
+                description: Access Token
+                type: string
+                required: true
+    - multi-output:
+        usage: XML/JSON output switch.
+        description: XML/JSON output switch.
+        queryParameters:
+            output:
+                description: Output parameter.
+                type: string
+                default: json
+    - q-query:
+        queryParameters:
+            q:
+                description: City name
+                type: string
+                required: true
+/history:
+    /city:
+        get:
+            is: [ secured, multi-output, q-query ]
+            responses:
+                200:
+                    body:
+                        application/json:
+                            schema: |
+                                {
+                                    "$schema": "http://json-schema.org/schema#",
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "message": {"type": "string"},
+                                        "cod": {"type": "string"},
+                                        "city_id": {"type": "integer", "minimum": 0},
+                                        "calctime": {"type": "number", "minimum": 0},
+                                        "cnt": {"type": "integer", "minimum": 0},
+                                        "list": {
+                                            "type": "array",
+                                            "items": [{
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "main": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "temp": {"type": "number", "minimum": 0},
+                                                            "pressure": {"type": "integer", "minimum": 0},
+                                                            "humidity": {"type": "integer", "minimum": 0, "maximum": 100},
+                                                            "temp_min": {"type": "number", "minimum": 0},
+                                                            "temp_max": {"type": "number", "minimum": 0},
+                                                            "sea_level": {"type": "integer", "minimum": 0},
+                                                            "grnd_level": {"type": "integer", "minimum": 0}
+                                                        }
+                                                    },
+                                                    "wind": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "speed": {"type": "number", "minimum": 0},
+                                                            "deg": {"type": "integer", "minimum": 0, "maximum": 360, "exclusiveMaximum": true}
+                                                        }
+                                                    },
+                                                    "coord": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "lon": {"type": "number", "minimum": -180, "maximum": 180},
+                                                            "lat": {"type": "number", "minimum": -180, "maximum": 180}
+                                                        }
+                                                    },
+                                                    "clouds": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "all": {"type": "integer", "minimum": 0, "maximum": 100}
+                                                        }
+                                                    },
+                                                    "weather": {
+                                                        "type": "array",
+                                                        "items": [
+                                                            {
+                                                                "type": "object",
+                                                                "additionalProperties": false,
+                                                                "properties": {
+                                                                    "id": {"type": "integer", "minimum": 0},
+                                                                    "main": {"type": "string"},
+                                                                    "description": {"type": "string"},
+                                                                    "icon": {"type": "string"}
+                                                                }
+                                                            }
+                                                        ]
+                                                    },
+                                                    "rain": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "1h": {"type": "number", "minimum": 0},
+                                                            "3h": {"type": "number", "minimum": 0},
+                                                            "6h": {"type": "number", "minimum": 0},
+                                                            "12h": {"type": "number", "minimum": 0},
+                                                            "24h": {"type": "number", "minimum": 0}
+                                                        }
+                                                    },
+                                                    "snow": {
+                                                        "type": "object",
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "1h": {"type": "number", "minimum": 0},
+                                                            "3h": {"type": "number", "minimum": 0},
+                                                            "6h": {"type": "number", "minimum": 0},
+                                                            "12h": {"type": "number", "minimum": 0},
+                                                            "24h": {"type": "number", "minimum": 0}
+                                                        }
+                                                    },
+                                                    "dt": {"type": "integer", "minimum": -2147483648, "maximum": 2147483647, "required": true},
+                                                    "id": {"type": "integer", "minimum": 0},
+                                                    "name": {"type": "integer"},
+                                                    "base": {"type": "string"}
+                                                }
+                                            }]
+                                        }
+                                    }
+                                }
+
+
+                        application/xml:
